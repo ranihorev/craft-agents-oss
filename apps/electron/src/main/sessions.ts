@@ -495,11 +495,28 @@ export class SessionManager {
         process.env.CLAUDE_CODE_OAUTH_TOKEN = billing.claudeOAuthToken
         delete process.env.ANTHROPIC_API_KEY
         sessionLog.info('Set Claude Max OAuth Token')
-      } else if (billing.apiKey) {
+      } else if (billing.type === 'api_key' && billing.apiKey) {
         // Use API key (pay-as-you-go)
         process.env.ANTHROPIC_API_KEY = billing.apiKey
         delete process.env.CLAUDE_CODE_OAUTH_TOKEN
         sessionLog.info('Set Anthropic API Key')
+      } else if (billing.type === 'bedrock_env') {
+        // Use AWS Bedrock - credentials come from environment
+        delete process.env.ANTHROPIC_API_KEY
+        delete process.env.CLAUDE_CODE_OAUTH_TOKEN
+        
+        // Set AWS environment variables if configured
+        const config = loadStoredConfig()
+        if (config?.awsRegion) {
+          process.env.AWS_REGION = config.awsRegion
+          process.env.AWS_DEFAULT_REGION = config.awsRegion
+          sessionLog.info('Set AWS_REGION:', config.awsRegion)
+        }
+        if (config?.awsProfile) {
+          process.env.AWS_PROFILE = config.awsProfile
+          sessionLog.info('Set AWS_PROFILE:', config.awsProfile)
+        }
+        sessionLog.info('Using AWS Bedrock (environment credentials)')
       } else {
         sessionLog.error('No authentication configured!')
       }

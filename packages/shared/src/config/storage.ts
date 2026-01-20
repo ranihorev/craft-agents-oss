@@ -54,6 +54,9 @@ export interface StoredConfig {
   // Auto-update
   dismissedUpdateVersion?: string;  // Version that user dismissed (skip notifications for this version)
   pendingUpdate?: PendingUpdate;  // Update ready for auto-install on next launch
+  // AWS Bedrock configuration (only used when authType is 'bedrock_env')
+  awsRegion?: string;
+  awsProfile?: string;
 }
 
 const CONFIG_FILE = join(CONFIG_DIR, 'config.json');

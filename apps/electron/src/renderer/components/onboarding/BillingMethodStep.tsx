@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils"
-import { Check, CreditCard, Key } from "lucide-react"
+import { Check, CreditCard, Key, Cloud } from "lucide-react"
 import { StepFormLayout, BackButton, ContinueButton } from "./primitives"
 
-export type BillingMethod = 'api_key' | 'claude_oauth'
+export type BillingMethod = 'api_key' | 'claude_oauth' | 'bedrock_env'
 
 interface BillingOption {
   id: BillingMethod
@@ -25,6 +25,12 @@ const BILLING_OPTIONS: BillingOption[] = [
     name: 'Anthropic API Key',
     description: 'Pay-as-you-go with your own API key.',
     icon: <Key className="size-4" />,
+  },
+  {
+    id: 'bedrock_env',
+    name: 'AWS Bedrock',
+    description: 'Use AWS credentials from your environment (AWS_PROFILE/AWS_REGION).',
+    icon: <Cloud className="size-4" />,
   },
 ]
 
