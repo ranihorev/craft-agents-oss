@@ -141,6 +141,10 @@ export async function getAuthState(): Promise<AuthState> {
     hasCredentials = !!apiKey;
   } else if (config?.authType === 'oauth_token') {
     hasCredentials = !!claudeOAuth;
+  } else if (config?.authType === 'bedrock_env') {
+    // For Bedrock, credentials are satisfied if auth type is set
+    // AWS credentials come from environment, not from credential store
+    hasCredentials = true;
   }
 
   return {

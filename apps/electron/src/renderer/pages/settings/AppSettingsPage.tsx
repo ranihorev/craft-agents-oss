@@ -427,6 +427,26 @@ export default function AppSettingsPage() {
       return
     }
 
+    // For AWS Bedrock, save immediately without showing a dialog
+    if (method === 'bedrock_env') {
+      try {
+        const result = await window.electronAPI.saveOnboardingConfig({
+          authType: 'bedrock_env',
+        })
+
+        if (result.success) {
+          setAuthType('bedrock_env')
+          setHasCredential(true)
+          setExpandedMethod(null)
+        } else {
+          console.error('Failed to save bedrock config:', result.error)
+        }
+      } catch (error) {
+        console.error('Error saving bedrock config:', error)
+      }
+      return
+    }
+
     setExpandedMethod(method)
     setApiKeyError(undefined)
     setClaudeOAuthStatus('idle')
@@ -631,13 +651,16 @@ export default function AppSettingsPage() {
                       ? 'API key configured'
                       : authType === 'oauth_token' && hasCredential
                         ? 'Claude connected'
-                        : 'Select a method'
+                        : authType === 'bedrock_env'
+                          ? 'AWS Bedrock configured'
+                          : 'Select a method'
                   }
                   value={authType}
                   onValueChange={(v) => handleMethodClick(v as AuthType)}
                   options={[
                     { value: 'oauth_token', label: 'Claude Pro/Max', description: 'Use your Pro or Max subscription' },
                     { value: 'api_key', label: 'API Key', description: 'Pay-as-you-go with your Anthropic key' },
+                    { value: 'bedrock_env', label: 'AWS Bedrock', description: 'Use AWS credentials from environment' },
                   ]}
                 />
               </SettingsCard>

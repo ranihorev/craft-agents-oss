@@ -62,6 +62,7 @@ function billingMethodToAuthType(method: BillingMethod): AuthType {
   switch (method) {
     case 'api_key': return 'api_key'
     case 'claude_oauth': return 'oauth_token'
+    case 'bedrock_env': return 'bedrock_env'
   }
 }
 
@@ -125,8 +126,14 @@ export function useOnboarding({
         break
 
       case 'billing-method':
-        // Go to credentials step for API Key or Claude OAuth
-        setState(s => ({ ...s, step: 'credentials' }))
+        // For AWS Bedrock, skip credentials step and save config directly
+        if (state.billingMethod === 'bedrock_env') {
+          await handleSaveConfig()
+          setState(s => ({ ...s, step: 'complete' }))
+        } else {
+          // Go to credentials step for API Key or Claude OAuth
+          setState(s => ({ ...s, step: 'credentials' }))
+        }
         break
 
       case 'credentials':
@@ -137,7 +144,7 @@ export function useOnboarding({
         onComplete()
         break
     }
-  }, [state.step, state.billingMethod, onComplete])
+  }, [state.step, state.billingMethod, onComplete, handleSaveConfig])
 
   // Go back to previous step
   const handleBack = useCallback(() => {

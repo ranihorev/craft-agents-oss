@@ -19,7 +19,7 @@ export interface Workspace {
   mcpAuthType?: McpAuthType;
 }
 
-export type AuthType = 'api_key' | 'oauth_token';
+export type AuthType = 'api_key' | 'oauth_token' | 'bedrock_env';
 
 /**
  * OAuth credentials from a fresh authentication flow.
@@ -40,5 +40,8 @@ export interface StoredConfig {
   activeWorkspaceId: string | null;
   activeSessionId: string | null;  // Currently active session (primary scope)
   model?: string;
+  // AWS Bedrock configuration (only used when authType is 'bedrock_env')
+  awsRegion?: string;
+  awsProfile?: string;
 }
 
